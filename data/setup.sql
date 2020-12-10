@@ -12,6 +12,6 @@ CREATE TABLE toys (
   type TEXT NOT NULL,
   name TEXT NOT NULL, 
   color TEXT,
-  child_id BIGINT NOT NULL REFERENCES children(id)
+  child_id BIGINT REFERENCES children(id)
   
 )

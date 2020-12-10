@@ -3,6 +3,7 @@ const app = require('../lib/app');
 const pool = require('../lib/utils/pool');
 const fs = require('fs');
 const Child = require('../lib/models/Children');
+const Toy = require('../lib/models/Toys');
 
 describe('app endpoints', () => {
   let child;
@@ -118,6 +119,50 @@ describe('app endpoints', () => {
       color: 'brown',
       childId: child.id,
     });
+  });
+
+  it('finds a toy by id via GET', async() => {
+    const toy = await Toy.insert({
+      type: 'stuffed',
+      name: 'bear',
+      color: 'brown',
+      // childId: child.id,
+    });
+
+
+    const res = await request(app)
+      .get(`/api/v1/toys/${toy.id}`);
+
+    expect(res.body).toEqual(toy);
+  });
+
+  it('finds all toys via GET', async() => {
+    const toys = await Promise.all([
+      {
+        type: 'stuffed',
+        name: 'bear',
+        color: 'brown',
+        childId: child.id,
+      },
+      {
+        type: 'stuffed',
+        name: 'dog',
+        color: 'black',
+        childId: child.id,
+      },
+      {
+        type: 'stuffed',
+        name: 'zebra',
+        color: 'rainbow',
+        childId: child.id,
+      }
+    ].map(toy => Toy.insert(toy)));
+
+    const res = await request(app)
+      .get('/api/v1/toys');
+    
+    expect(res.body).toEqual(expect.arrayContaining(toys));
+    // expect(res.body).toHaveLength(child.length);
   });
 
   afterAll(() => {
