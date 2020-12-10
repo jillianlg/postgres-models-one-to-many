@@ -165,6 +165,43 @@ describe('app endpoints', () => {
     // expect(res.body).toHaveLength(child.length);
   });
 
+  it('updates a toy via PUT', async() => {
+    const toy = await Toy.insert({
+      type: 'stuffed',
+      name: 'zebra',
+      color: 'rainbow',
+    });
+
+    const res = await request(app)
+      .put(`/api/v1/toys/${toy.id}`)
+      .send({
+        type: 'stuffed',
+        name: 'zebra',
+        color: 'black and white',
+      });
+    
+    expect(res.body).toEqual({
+      ...toy,
+      type: 'stuffed',
+      name: 'zebra',
+      color: 'black and white',
+    });
+
+  });
+
+  it('removes a toy via DELETE', async() => {
+    const toy = await Toy.insert({
+      type: 'stuffed',
+      name: 'zebra',
+      color: 'rainbow', 
+    });
+    
+    const response = await request(app)
+      .delete(`/api/v1/toys/${toy.id}`);
+
+    expect(response.body).toEqual(toy);
+  });
+
   afterAll(() => {
     return pool.end();
   });
