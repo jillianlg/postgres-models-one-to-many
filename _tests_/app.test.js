@@ -31,16 +31,49 @@ describe('app endpoints', () => {
     });
   });
 
-  it('finds a child by id via GET', async() => {
+  // it('finds a child by id via GET', async() => {
+  //   const child = await Child.insert({
+  //     name: 'Joey',
+  //     age: 6,
+  //   });
+
+  //   const res = await request(app)
+  //     .get(`/api/v1/children/${child.id}`);
+
+  //   expect(res.body).toEqual(child);
+  // });
+
+  it('finds a child by id and associated toys via GET', async() => {
     const child = await Child.insert({
       name: 'Joey',
-      age: 6,
+      age: '6'
     });
+
+    const toys = await Promise.all([
+      { type: 'stuffed',
+        name: 'bear',
+        color: 'brown',
+        childId: child.id 
+      },
+      { type: 'stuffed',
+        name: 'dog',
+        color: 'black',
+        childId: child.id 
+      },
+      { type: 'stuffed',
+        name: 'zebra',
+        color: 'rainbow',
+        childId: child.id 
+      },
+    ].map(toy => Toy.insert(toy)));
 
     const res = await request(app)
       .get(`/api/v1/children/${child.id}`);
 
-    expect(res.body).toEqual(child);
+    expect(res.body).toEqual({
+      ...child,
+      toys: expect.arrayContaining(toys)
+    });
   });
 
   it('finds all children via GET', async() => {
