@@ -42,6 +42,64 @@ describe('app endpoints', () => {
     expect(res.body).toEqual(child);
   });
 
+  it('finds all children via GET', async() => {
+    const children = await Promise.all([
+      {
+        name: 'Jamie',
+        age: 12,
+      },
+      {
+        name: 'Joey',
+        age: 6,
+      },
+      {
+        name: 'Dani',
+        age: 9,
+      }
+    ].map(child => Child.insert(child)));
+
+    const res = await request(app)
+      .get('/api/v1/children');
+    
+    expect(res.body).toEqual(expect.arrayContaining(children));
+    // expect(res.body).toHaveLength(child.length);
+  });
+
+  it('updates a child via PUT', async() => {
+    const child = await Child.insert({
+      name: 'Joey',
+      age: 6
+    });
+
+    const res = await request(app)
+      .put(`/api/v1/children/${child.id}`)
+      .send({
+        name: 'Joey',
+        age: 9
+      });
+    
+    expect(res.body).toEqual({
+      id: child.id,
+      name: 'Joey',
+      age: 9
+    });
+
+  });
+
+  it('removes a child via DELETE', async() => {
+    const child = await Child.insert({
+      name: 'Joey',
+      age: 6 
+    });
+    
+    const response = await request(app)
+      .delete(`/api/v1/children/${child.id}`);
+
+    expect(response.body).toEqual(child);
+  });
+  
+
+
   //  CRUD test for MANY TOYS
   it('creates a new toy via POST', async() => {
     const res = await request(app)
