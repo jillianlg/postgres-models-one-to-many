@@ -30,6 +30,18 @@ describe('app endpoints', () => {
     });
   });
 
+  it('finds a child by id via GET', async() => {
+    const child = await Child.insert({
+      name: 'Joey',
+      age: 6,
+    });
+
+    const res = await request(app)
+      .get(`/api/v1/children/${child.id}`);
+
+    expect(res.body).toEqual(child);
+  });
+
   //  CRUD test for MANY TOYS
   it('creates a new toy via POST', async() => {
     const res = await request(app)
