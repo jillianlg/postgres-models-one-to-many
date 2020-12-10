@@ -44,10 +44,10 @@ describe('app endpoints', () => {
   // });
 
   it('finds a child by id and associated toys via GET', async() => {
-    const child = await Child.insert({
-      name: 'Joey',
-      age: '6'
-    });
+    // const child = await Child.insert({
+    //   name: 'Joey',
+    //   age: '6'
+    // });
 
     const toys = await Promise.all([
       { type: 'stuffed',
@@ -142,7 +142,7 @@ describe('app endpoints', () => {
         type: 'stuffed',
         name: 'bear',
         color: 'brown',
-        child_id: child.id,
+        childId: child.id,
       });
 
     expect(res.body).toEqual({
